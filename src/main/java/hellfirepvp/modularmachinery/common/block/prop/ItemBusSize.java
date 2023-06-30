@@ -32,9 +32,8 @@ public enum ItemBusSize implements IStringSerializable {
 
     private final int defaultConfigSize;
 
-    private ItemBusSize(int defaultConfigSize) {
+    ItemBusSize(int defaultConfigSize) {
         this.defaultConfigSize = defaultConfigSize;
-        this.slots = this.defaultConfigSize; //Temp. TODO configurable and GUI building
     }
 
     public int getSlotCount() {
@@ -44,6 +43,12 @@ public enum ItemBusSize implements IStringSerializable {
     @Override
     public String getName() {
         return name().toLowerCase();
+    }
+
+    public static void loadFromConfig(Configuration cfg) {
+        for (ItemBusSize size : values()) {
+            size.slots = cfg.getInt("slots", "itembus." + size.name().toUpperCase(), size.defaultConfigSize, 1, 32, "Defines the slot count for the slots-type of item bus.");
+        }
     }
 
 }

@@ -1,8 +1,23 @@
+#English (en_US)
+#Lang by promaMaks for version 1.11
+
 itemGroup.modularmachinery=Modular Machinery
 
 command.modularmachinery.syntax=/mm-syntax
 command.modularmachinery.hand=/mm-hand
+command.modularmachinery.performance_report=/mm-performance_report [reset]
 command.modularmachinery.hand.empty=Please hold an item to get the data from.
+command.modularmachinery.performance_report.title=Modular Machinery - Concurrent Performance Reporting (%s Executions Counted)
+command.modularmachinery.performance_report.reset=Performance report has been reset.
+command.modularmachinery.performance_report.total_executed=Total executed: %s
+command.modularmachinery.performance_report.total_used_time=Total used time: %s ms
+command.modularmachinery.performance_report.task_used_time=Parallel operation used time: %s ms
+command.modularmachinery.performance_report.task_used_time_avg=Parallel operation used time avg: %s ms
+command.modularmachinery.performance_report.main_thread_total_used_time=Main thread total used time: %s ms
+command.modularmachinery.performance_report.main_thread_used_time_avg=Main thread used time avg: %s ms
+command.modularmachinery.performance_report.used_time_avg=Single task used time average: %s µs
+command.modularmachinery.performance_report.used_time_avg_per_execution=Avg spent per execution: %.2f ms
+command.modularmachinery.performance_report.tasks_avg_per_execution=Avg of tasks per execution: %s
 
 gui.controller.blueprint=Blueprint Found: %s
 gui.controller.blueprint.none=None
@@ -14,6 +29,11 @@ gui.controller.status.missing_structure=Missing structure
 gui.controller.status.no_recipe=No matching recipe found
 gui.controller.status.crafting=Processing...
 gui.controller.status.crafting.progress=Progress: %s
+
+top.recipe.progress=Progress
+top.machine.working=Processing
+top.machine.structure.found=Structure formed
+top.machine.structure.none=Missing structure
 
 craftcheck.failure.item.input=Missing input item!
 craftcheck.failure.item.output.space=Not enough inventory space for item output(s)!
@@ -46,6 +66,10 @@ message.structurebuild.fail=Failed to save the machine to a file! Check the log 
 
 tooltip.machinery.empty=Empty
 
+tooltip.machinery.ingredient_array_input=Accepts the following inputs (only one of them is consumed):
+tooltip.machinery.catalyst=§aAs catalyst input. (optional input)
+tooltip.machinery.catalyst.effect=Catalytic effect:
+
 tooltip.machinery.fuel=Accepts any fuel.
 tooltip.machinery.fuel.item=BurnTime: %s
 tooltip.machinery.fuel.in=Required total Fuel Burntime:
@@ -69,8 +93,11 @@ tooltip.machinery.energy.out.tick=Per Tick: %s %s/t
 tooltip.machinery.energy.out.total=Total: %s %s
 
 tooltip.energy.type.fe=FE
+tooltip.energy.type.rf=RF
 tooltip.energy.type.ic2_eu=EU
 tooltip.energy.type.gt_eu=EU
+
+tooltip.fluid_pertick=Consumption per Tick：%smB
 
 tooltip.constructtool.creative=Creative Structure-To-JSON Tool
 
@@ -118,7 +145,7 @@ tooltip.ic2.powertier.12.name=UXV
 
 item.modularmachinery.itemblueprint.name=Machine Blueprint
 item.modularmachinery.itemmodularium.name=Modularium
-item.modularmachinery.itemconstructtool.name=Construct Selection Tool
+item.modularmachinery.itemconstructtool.name=§cConstruct Selection Tool
 
 tile.modularmachinery.blockcontroller.name=Machine Controller
 

@@ -10,7 +10,10 @@ package hellfirepvp.modularmachinery.common.integration.crafttweaker;
 
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.item.IngredientItem;
+import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.oredict.IOreDictEntry;
@@ -27,6 +30,7 @@ import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.gas.GasStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
@@ -133,51 +137,80 @@ public class RecipePrimer implements PreparedRecipe {
     // ITEM input
     //----------------------------------------------------------------------------------------------
     @ZenMethod
-    public RecipePrimer addItemInput(IItemStack stack) {
-        requireItem(IOType.INPUT, stack);
+    public RecipePrimer addItemInput(IIngredient input) {
+        if (input instanceof IItemStack) {
+            requireFuel(IOType.INPUT, (IItemStack) input);
+        } else if (input instanceof IOreDictEntry) {
+            requireFuel(IOType.INPUT, ((IOreDictEntry) input).getName(), 1);
+        } else if (input instanceof IngredientStack && input.getInternal() instanceof IOreDictEntry) {
+            requireFuel(IOType.INPUT, ((IOreDictEntry) input.getInternal()).getName(), input.getAmount());
+        } else {
+            CraftTweakerAPI.logError(String.format("[ModularMachinery] Invalid input type %s(%s)! Ignored.", input, input.getClass()));
+        }
+
         return this;
     }
 
-    @ZenMethod
-    public RecipePrimer addItemInput(IOreDictEntry oreDict) {
-        return addItemInput(oreDict, 1);
-    }
-
+    @Deprecated
     @ZenMethod
     public RecipePrimer addItemInput(IOreDictEntry oreDict, int amount) {
-        requireItem(IOType.INPUT, oreDict.getName(), amount);
+        requireFuel(IOType.INPUT, oreDict.getName(), amount);
+        CraftTweakerAPI.logWarning(String.format("[ModularMachinery] Deprecated method " +
+                        "`addItemInput(<ore:%s>, %s)`! Consider using `addItemInput(<ore:%s> * %s)`",
+                oreDict.getName(), amount, oreDict.getName(), amount)
+        );
         return this;
     }
 
-    //DERP. Sorry x)
     @ZenMethod
-    public RecipePrimer addFuelItemInout(int requiredTotalBurnTime) {
-        return addFuelItemInput(requiredTotalBurnTime);
+    public RecipePrimer addItemInputs(IIngredient... inputs) {
+        for (IIngredient input : inputs) {
+            addItemInput(input);
+        }
+        return this;
     }
 
     @ZenMethod
     public RecipePrimer addFuelItemInput(int requiredTotalBurnTime) {
-        requireItem(IOType.INPUT, requiredTotalBurnTime);
+        requireFuel(requiredTotalBurnTime);
         return this;
     }
-
     //----------------------------------------------------------------------------------------------
     // ITEM output
     //----------------------------------------------------------------------------------------------
+
     @ZenMethod
-    public RecipePrimer addItemOutput(IItemStack stack) {
-        requireItem(IOType.OUTPUT, stack);
+    public RecipePrimer addItemOutput(IIngredient output) {
+        if (output instanceof IItemStack) {
+            requireFuel(IOType.OUTPUT, (IItemStack) output);
+        } else if (output instanceof IOreDictEntry) {
+            requireFuel(IOType.OUTPUT, ((IOreDictEntry) output).getName(), 1);
+        } else if (output instanceof IngredientStack && output.getInternal() instanceof IOreDictEntry) {
+            requireFuel(IOType.OUTPUT, ((IOreDictEntry) output.getInternal()).getName(), output.getAmount());
+        } else {
+            CraftTweakerAPI.logError(String.format("[ModularMachinery] Invalid output type %s(%s)! Ignored.", output, output.getClass()));
+        }
+
+        return this;
+    }
+
+    @Deprecated
+    @ZenMethod
+    public RecipePrimer addItemOutput(IOreDictEntry oreDict, int amount) {
+        requireFuel(IOType.OUTPUT, oreDict.getName(), amount);
+        CraftTweakerAPI.logWarning(String.format("[ModularMachinery] Deprecated method " +
+                        "`addItemOutput(<ore:%s>, %s)`! Consider using `addItemOutput(<ore:%s> * %s)`",
+                oreDict.getName(), amount, oreDict.getName(), amount)
+        );
         return this;
     }
 
     @ZenMethod
-    public RecipePrimer addItemOutput(IOreDictEntry oreDict) {
-        return addItemOutput(oreDict, 1);
-    }
+    public RecipePrimer addItemOutputs(IIngredient... inputs) {
+        for (IIngredient input : inputs) {
+            addItemOutput(input);
+        }
 
-    @ZenMethod
-    public RecipePrimer addItemOutput(IOreDictEntry oreDict, int amount) {
-        requireItem(IOType.OUTPUT, oreDict.getName(), amount);
         return this;
     }
 
@@ -235,6 +268,29 @@ public class RecipePrimer implements PreparedRecipe {
     private void requireItem(IOType ioType, String oreDictName, int amount) {
         appendComponent(new RequirementItem(ioType, oreDictName, amount));
     }
+
+    private void requireFuel(int requiredTotalBurnTime) {
+        appendComponent(new RequirementItem(IOType.INPUT, requiredTotalBurnTime));
+    }
+
+    private void requireFuel(IOType ioType, IItemStack stack) {
+        ItemStack mcStack = CraftTweakerMC.getItemStack(stack);
+        if (mcStack.isEmpty()) {
+            CraftTweakerAPI.logError("[ModularMachinery] ItemStack not found/unknown item: " + stack.toString());
+            return;
+        }
+        RequirementItem ri = new RequirementItem(ioType, mcStack);
+        if (stack.getTag().length() > 0) {
+            ri.tag = CraftTweakerMC.getNBTCompound(stack.getTag());
+            ri.previewDisplayTag = CraftTweakerMC.getNBTCompound(stack.getTag());
+        }
+        appendComponent(ri);
+    }
+
+    private void requireFuel(IOType ioType, String oreDictName, int amount) {
+        appendComponent(new RequirementItem(ioType, oreDictName, amount));
+    }
+
 
     public void appendComponent(ComponentRequirement component) {
         this.components.add(component);

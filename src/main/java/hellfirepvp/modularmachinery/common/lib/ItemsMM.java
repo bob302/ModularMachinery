@@ -8,9 +8,7 @@
 
 package hellfirepvp.modularmachinery.common.lib;
 
-import hellfirepvp.modularmachinery.common.item.ItemBlueprint;
-import hellfirepvp.modularmachinery.common.item.ItemConstructTool;
-import hellfirepvp.modularmachinery.common.item.ItemModularium;
+import hellfirepvp.modularmachinery.common.item.*;
 
 /**
  * This class is part of the Modular Machinery Mod
@@ -24,5 +22,7 @@ public class ItemsMM {
     public static ItemBlueprint blueprint;
     public static ItemModularium modularium;
     public static ItemConstructTool constructTool;
+    public static ItemRedstoneSignal redstoneSignal;
+    public static ItemCatalyst catalyst;
 
 }

@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -72,10 +72,12 @@ repositories {
         // Open Computers
         url "http://maven.cil.li/"
     }
-    
+
     maven {
-        // Curseforge
-        url "https://minecraft.curseforge.com/api/maven"
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 
 }
@@ -86,19 +88,15 @@ dependencies {
 
     compileOnly fg.deobf('mezz.jei:jei_1.12.2:4.14.4.267')
     runtimeOnly fg.deobf('mezz.jei:jei_1.12.2:4.14.4.267')
-
-    compileOnly fg.deobf('cofh:RedstoneFlux:1.12-2.1.0.7:universal')
-    runtimeOnly fg.deobf('cofh:RedstoneFlux:1.12-2.1.0.7:universal')
-
-    compileOnly fg.deobf('CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.14.520')
-    runtimeOnly fg.deobf('CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.14.520')
-
-    deobf group: 'codechicken', name: 'CodeChickenLib', version: '1.12.2-3.2.2.353', classifier: 'universal'
-    deobf group: 'com.brandon3055.brandonscore', name: 'BrandonsCore', version: '1.12.2-2.4.9.195', classifier: 'universal'
-    deobf group: 'com.brandon3055.draconicevolution', name: 'Draconic-Evolution', version: '1.12.2-2.3.18.329', classifier: 'universal'
-
-    deobf "gregtechce:gregtech:1.12.2:1.5.21.182"
-
+    implementation 'CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.+'
+    
+    implementation fg.deobf("curse.maven:RedstoneFlux-270789:2920436")
+    implementation "curse.maven:CodeChickenLib-242818:2779848"
+    implementation "curse.maven:brandonscore-231382:3051539"
+    implementation "curse.maven:draconicevolution-223565:3051542"
+    implementation "curse.maven:gregtech-293327:3266351"
+    implementation "curse.maven:Mekanism-268560:2835175"
+    implementation "curse.maven:industrialcraft-2-242638:3078604"
 }
 
 tasks.withType(JavaCompile) {
